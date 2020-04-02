@@ -16,6 +16,7 @@ $ yarn build
 * Deploy Flux contract
 * Add 3 Oracles to Flux contract
 * Save addresses to `./addresses.json`
+* Generate feeds ui config
 
 ```
 $ node ./build/setup
