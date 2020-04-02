@@ -1,0 +1,16 @@
+{
+  "name": "chainlink-contracts",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc -b",
+    "build:watch": "yarn build --watch"
+  },
+  "dependencies": {
+    "@types/node": "^13.9.8",
+    "ethers": "^4.0.44",
+    "ts-node": "^8.6.2",
+    "typescript": "^3.7.5"
+  }
+}
