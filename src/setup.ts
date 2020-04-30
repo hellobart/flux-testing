@@ -1,6 +1,7 @@
 import {deployLink} from './deployLink'
 import {deployFlux} from './deployFlux'
 import {addOracle} from './addOracle'
+import {transferEth} from './transferEth'
 
 let fs = require('fs')
 let util = require('util')
@@ -31,6 +32,7 @@ let addresses = require(rootDir + '/addresses.json')
 
 async function setup() {
   console.log('----- Flux Aggregator Setup -----')
+  await transferEth()
   const linkAddress = await deployLink(addresses.wallet[1])
   const fluxAddress = await deployFlux(addresses.wallet[1], linkAddress)
   await addOracle(addresses.wallet[1], fluxAddress, addresses.wallet)
