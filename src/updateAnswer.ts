@@ -18,8 +18,7 @@ async function updateAnswer(args: any) {
   const signer = provider.getSigner(addresses.oracles[parseInt(oracleNum)])
 
   const contract = FluxAggregatorFactory.connect(addresses.flux, signer)
-
-  const tx = await contract.updateAnswer(parseInt(round), parseInt(answer))
+  const tx = await contract.submit(parseInt(round), parseInt(answer))
   console.log('Updated Answer:', answer)
   return tx;
 }

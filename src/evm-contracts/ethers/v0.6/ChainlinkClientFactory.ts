@@ -5,6 +5,7 @@ import { Contract, ContractFactory, Signer } from "ethers";
 import { Provider } from "ethers/providers";
 import { UnsignedTransaction } from "ethers/utils/transaction";
 
+import { TransactionOverrides } from ".";
 import { ChainlinkClient } from "./ChainlinkClient";
 
 export class ChainlinkClientFactory extends ContractFactory {
@@ -12,11 +13,11 @@ export class ChainlinkClientFactory extends ContractFactory {
     super(_abi, _bytecode, signer);
   }
 
-  deploy(): Promise<ChainlinkClient> {
-    return super.deploy() as Promise<ChainlinkClient>;
+  deploy(overrides?: TransactionOverrides): Promise<ChainlinkClient> {
+    return super.deploy(overrides) as Promise<ChainlinkClient>;
   }
-  getDeployTransaction(): UnsignedTransaction {
-    return super.getDeployTransaction();
+  getDeployTransaction(overrides?: TransactionOverrides): UnsignedTransaction {
+    return super.getDeployTransaction(overrides);
   }
   attach(address: string): ChainlinkClient {
     return super.attach(address) as ChainlinkClient;
@@ -75,4 +76,4 @@ const _abi = [
 ];
 
 const _bytecode =
-  "0x60806040526001600455348015601457600080fd5b50603f8060226000396000f3fe6080604052600080fdfea2646970667358221220354542247ebfdbae03c37efd5b38cd8f1c889e9dcc5ec488f5ce31dd4439eb7564736f6c63430006020033";
+  "0x60806040526001600455348015601457600080fd5b50603f8060226000396000f3fe6080604052600080fdfea264697066735822122080f760cb085bc296c749ad79443e21f13b8cb5bab8e89c5826a0e114b181f8e364736f6c63430006020033";

@@ -27,8 +27,9 @@ interface VRFCoordinatorInterface extends Interface {
     }>;
 
     registerProvingKey: TypedFunctionDescription<{
-      encode([_fee, _publicProvingKey, _jobID]: [
+      encode([_fee, _oracle, _publicProvingKey, _jobID]: [
         BigNumberish,
+        string,
         BigNumberish[],
         Arrayish
       ]): string;
@@ -108,6 +109,7 @@ export class VRFCoordinator extends Contract {
 
     registerProvingKey(
       _fee: BigNumberish,
+      _oracle: string,
       _publicProvingKey: BigNumberish[],
       _jobID: Arrayish,
       overrides?: TransactionOverrides
@@ -160,6 +162,7 @@ export class VRFCoordinator extends Contract {
 
   registerProvingKey(
     _fee: BigNumberish,
+    _oracle: string,
     _publicProvingKey: BigNumberish[],
     _jobID: Arrayish,
     overrides?: TransactionOverrides
@@ -211,6 +214,7 @@ export class VRFCoordinator extends Contract {
 
     registerProvingKey(
       _fee: BigNumberish,
+      _oracle: string,
       _publicProvingKey: BigNumberish[],
       _jobID: Arrayish
     ): Promise<BigNumber>;

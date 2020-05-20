@@ -14,12 +14,22 @@ interface FluxAggregatorInterface extends Interface {
   functions: {
     VERSION: TypedFunctionDescription<{ encode([]: []): string }>;
 
+    acceptAdmin: TypedFunctionDescription<{
+      encode([_oracle]: [string]): string;
+    }>;
+
     acceptOwnership: TypedFunctionDescription<{ encode([]: []): string }>;
 
-    addOracle: TypedFunctionDescription<{
-      encode([_oracle, _admin, _minAnswers, _maxAnswers, _restartDelay]: [
-        string,
-        string,
+    addOracles: TypedFunctionDescription<{
+      encode([
+        _oracles,
+        _admins,
+        _minSubmissions,
+        _maxSubmissions,
+        _restartDelay
+      ]: [
+        string[],
+        string[],
         BigNumberish,
         BigNumberish,
         BigNumberish
@@ -42,15 +52,7 @@ interface FluxAggregatorInterface extends Interface {
 
     getOracles: TypedFunctionDescription<{ encode([]: []): string }>;
 
-    getOriginatingRoundOfAnswer: TypedFunctionDescription<{
-      encode([_roundId]: [BigNumberish]): string;
-    }>;
-
-    getRoundStartedAt: TypedFunctionDescription<{
-      encode([_roundId]: [BigNumberish]): string;
-    }>;
-
-    getTimedOutStatus: TypedFunctionDescription<{
+    getRoundData: TypedFunctionDescription<{
       encode([_roundId]: [BigNumberish]): string;
     }>;
 
@@ -62,29 +64,37 @@ interface FluxAggregatorInterface extends Interface {
 
     latestRound: TypedFunctionDescription<{ encode([]: []): string }>;
 
+    latestRoundData: TypedFunctionDescription<{ encode([]: []): string }>;
+
     latestSubmission: TypedFunctionDescription<{
       encode([_oracle]: [string]): string;
     }>;
 
     latestTimestamp: TypedFunctionDescription<{ encode([]: []): string }>;
 
-    maxAnswerCount: TypedFunctionDescription<{ encode([]: []): string }>;
+    linkToken: TypedFunctionDescription<{ encode([]: []): string }>;
 
-    minAnswerCount: TypedFunctionDescription<{ encode([]: []): string }>;
+    maxSubmissionCount: TypedFunctionDescription<{ encode([]: []): string }>;
+
+    minSubmissionCount: TypedFunctionDescription<{ encode([]: []): string }>;
 
     onTokenTransfer: TypedFunctionDescription<{
-      encode([, ,]: [string, BigNumberish, Arrayish]): string;
+      encode([, , _data]: [string, BigNumberish, Arrayish]): string;
     }>;
 
     oracleCount: TypedFunctionDescription<{ encode([]: []): string }>;
+
+    oracleRoundState: TypedFunctionDescription<{
+      encode([_oracle]: [string]): string;
+    }>;
 
     owner: TypedFunctionDescription<{ encode([]: []): string }>;
 
     paymentAmount: TypedFunctionDescription<{ encode([]: []): string }>;
 
-    removeOracle: TypedFunctionDescription<{
-      encode([_oracle, _minAnswers, _maxAnswers, _restartDelay]: [
-        string,
+    removeOracles: TypedFunctionDescription<{
+      encode([_oracles, _minSubmissions, _maxSubmissions, _restartDelay]: [
+        string[],
         BigNumberish,
         BigNumberish,
         BigNumberish
@@ -93,43 +103,39 @@ interface FluxAggregatorInterface extends Interface {
 
     reportingRound: TypedFunctionDescription<{ encode([]: []): string }>;
 
-    reportingRoundStartedAt: TypedFunctionDescription<{
-      encode([]: []): string;
-    }>;
+    requestNewRound: TypedFunctionDescription<{ encode([]: []): string }>;
 
     restartDelay: TypedFunctionDescription<{ encode([]: []): string }>;
 
-    roundState: TypedFunctionDescription<{
-      encode([_oracle]: [string]): string;
+    setRequesterPermissions: TypedFunctionDescription<{
+      encode([_requester, _authorized, _delay]: [
+        string,
+        boolean,
+        BigNumberish
+      ]): string;
     }>;
 
-    setAuthorization: TypedFunctionDescription<{
-      encode([_requester, _allowed]: [string, boolean]): string;
+    submit: TypedFunctionDescription<{
+      encode([_roundId, _submission]: [BigNumberish, BigNumberish]): string;
     }>;
-
-    startNewRound: TypedFunctionDescription<{ encode([]: []): string }>;
 
     timeout: TypedFunctionDescription<{ encode([]: []): string }>;
 
-    transferOwnership: TypedFunctionDescription<{
-      encode([_to]: [string]): string;
-    }>;
-
-    updateAdmin: TypedFunctionDescription<{
+    transferAdmin: TypedFunctionDescription<{
       encode([_oracle, _newAdmin]: [string, string]): string;
     }>;
 
-    updateAnswer: TypedFunctionDescription<{
-      encode([_round, _answer]: [BigNumberish, BigNumberish]): string;
+    transferOwnership: TypedFunctionDescription<{
+      encode([_to]: [string]): string;
     }>;
 
     updateAvailableFunds: TypedFunctionDescription<{ encode([]: []): string }>;
 
     updateFutureRounds: TypedFunctionDescription<{
       encode([
-        _newPaymentAmount,
-        _minAnswers,
-        _maxAnswers,
+        _paymentAmount,
+        _minSubmissions,
+        _maxSubmissions,
         _restartDelay,
         _timeout
       ]: [
@@ -141,7 +147,11 @@ interface FluxAggregatorInterface extends Interface {
       ]): string;
     }>;
 
-    withdraw: TypedFunctionDescription<{
+    withdrawFunds: TypedFunctionDescription<{
+      encode([_recipient, _amount]: [string, BigNumberish]): string;
+    }>;
+
+    withdrawPayment: TypedFunctionDescription<{
       encode([_oracle, _recipient, _amount]: [
         string,
         string,
@@ -149,11 +159,7 @@ interface FluxAggregatorInterface extends Interface {
       ]): string;
     }>;
 
-    withdrawFunds: TypedFunctionDescription<{
-      encode([_recipient, _amount]: [string, BigNumberish]): string;
-    }>;
-
-    withdrawable: TypedFunctionDescription<{
+    withdrawablePayment: TypedFunctionDescription<{
       encode([_oracle]: [string]): string;
     }>;
   };
@@ -179,8 +185,12 @@ interface FluxAggregatorInterface extends Interface {
       ]): string[];
     }>;
 
-    OracleAdded: TypedEventDescription<{
-      encodeTopics([oracle]: [string | null]): string[];
+    OracleAdminUpdateRequested: TypedEventDescription<{
+      encodeTopics([oracle, admin, newAdmin]: [
+        string | null,
+        null,
+        null
+      ]): string[];
     }>;
 
     OracleAdminUpdated: TypedEventDescription<{
@@ -190,27 +200,34 @@ interface FluxAggregatorInterface extends Interface {
       ]): string[];
     }>;
 
-    OracleRemoved: TypedEventDescription<{
-      encodeTopics([oracle]: [string | null]): string[];
+    OraclePermissionsUpdated: TypedEventDescription<{
+      encodeTopics([oracle, whitelisted]: [
+        string | null,
+        boolean | null
+      ]): string[];
     }>;
 
     OwnershipTransferRequested: TypedEventDescription<{
       encodeTopics([from, to]: [string | null, string | null]): string[];
     }>;
 
-    OwnershipTransfered: TypedEventDescription<{
+    OwnershipTransferred: TypedEventDescription<{
       encodeTopics([from, to]: [string | null, string | null]): string[];
     }>;
 
-    RequesterAuthorizationSet: TypedEventDescription<{
-      encodeTopics([requester, allowed]: [string | null, null]): string[];
+    RequesterPermissionsSet: TypedEventDescription<{
+      encodeTopics([requester, authorized, delay]: [
+        string | null,
+        null,
+        null
+      ]): string[];
     }>;
 
     RoundDetailsUpdated: TypedEventDescription<{
       encodeTopics([
         paymentAmount,
-        minAnswerCount,
-        maxAnswerCount,
+        minSubmissionCount,
+        maxSubmissionCount,
         restartDelay,
         timeout
       ]: [
@@ -223,7 +240,7 @@ interface FluxAggregatorInterface extends Interface {
     }>;
 
     SubmissionReceived: TypedEventDescription<{
-      encodeTopics([answer, round, oracle]: [
+      encodeTopics([submission, round, oracle]: [
         BigNumberish | null,
         BigNumberish | null,
         string | null
@@ -251,15 +268,20 @@ export class FluxAggregator extends Contract {
   functions: {
     VERSION(): Promise<BigNumber>;
 
+    acceptAdmin(
+      _oracle: string,
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
     acceptOwnership(
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
-    addOracle(
-      _oracle: string,
-      _admin: string,
-      _minAnswers: BigNumberish,
-      _maxAnswers: BigNumberish,
+    addOracles(
+      _oracles: string[],
+      _admins: string[],
+      _minSubmissions: BigNumberish,
+      _maxSubmissions: BigNumberish,
       _restartDelay: BigNumberish,
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
@@ -274,21 +296,32 @@ export class FluxAggregator extends Contract {
 
     getAdmin(_oracle: string): Promise<string>;
 
-    getAnswer(_roundId: BigNumberish): Promise<BigNumber>;
+    getAnswer(
+      _roundId: BigNumberish,
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
 
     getOracles(): Promise<string[]>;
 
-    getOriginatingRoundOfAnswer(_roundId: BigNumberish): Promise<BigNumber>;
+    getRoundData(
+      _roundId: BigNumberish,
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
 
-    getRoundStartedAt(_roundId: BigNumberish): Promise<BigNumber>;
+    getTimestamp(
+      _roundId: BigNumberish,
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
 
-    getTimedOutStatus(_roundId: BigNumberish): Promise<boolean>;
+    latestAnswer(
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
 
-    getTimestamp(_roundId: BigNumberish): Promise<BigNumber>;
+    latestRound(overrides?: TransactionOverrides): Promise<ContractTransaction>;
 
-    latestAnswer(): Promise<BigNumber>;
-
-    latestRound(): Promise<BigNumber>;
+    latestRoundData(
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
 
     latestSubmission(
       _oracle: string
@@ -297,82 +330,89 @@ export class FluxAggregator extends Contract {
       1: BigNumber;
     }>;
 
-    latestTimestamp(): Promise<BigNumber>;
+    latestTimestamp(
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
 
-    maxAnswerCount(): Promise<number>;
+    linkToken(): Promise<string>;
 
-    minAnswerCount(): Promise<number>;
+    maxSubmissionCount(): Promise<number>;
+
+    minSubmissionCount(): Promise<number>;
 
     onTokenTransfer(
       arg0: string,
       arg1: BigNumberish,
-      arg2: Arrayish,
+      _data: Arrayish,
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
     oracleCount(): Promise<number>;
 
+    oracleRoundState(
+      _oracle: string
+    ): Promise<{
+      _eligibleToSubmit: boolean;
+      _roundId: number;
+      _latestSubmission: BigNumber;
+      _startedAt: BigNumber;
+      _timeout: BigNumber;
+      _availableFunds: BigNumber;
+      _oracleCount: number;
+      _paymentAmount: BigNumber;
+      0: boolean;
+      1: number;
+      2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
+      5: BigNumber;
+      6: number;
+      7: BigNumber;
+    }>;
+
     owner(): Promise<string>;
 
     paymentAmount(): Promise<BigNumber>;
 
-    removeOracle(
-      _oracle: string,
-      _minAnswers: BigNumberish,
-      _maxAnswers: BigNumberish,
+    removeOracles(
+      _oracles: string[],
+      _minSubmissions: BigNumberish,
+      _maxSubmissions: BigNumberish,
       _restartDelay: BigNumberish,
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
     reportingRound(): Promise<BigNumber>;
 
-    reportingRoundStartedAt(): Promise<BigNumber>;
-
-    restartDelay(): Promise<number>;
-
-    roundState(
-      _oracle: string
-    ): Promise<{
-      _reportableRoundId: number;
-      _eligibleToSubmit: boolean;
-      _latestRoundAnswer: BigNumber;
-      _timesOutAt: BigNumber;
-      _availableFunds: BigNumber;
-      _paymentAmount: BigNumber;
-      0: number;
-      1: boolean;
-      2: BigNumber;
-      3: BigNumber;
-      4: BigNumber;
-      5: BigNumber;
-    }>;
-
-    setAuthorization(
-      _requester: string,
-      _allowed: boolean,
+    requestNewRound(
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
-    startNewRound(
+    restartDelay(): Promise<number>;
+
+    setRequesterPermissions(
+      _requester: string,
+      _authorized: boolean,
+      _delay: BigNumberish,
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
+    submit(
+      _roundId: BigNumberish,
+      _submission: BigNumberish,
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
     timeout(): Promise<number>;
 
-    transferOwnership(
-      _to: string,
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
-
-    updateAdmin(
+    transferAdmin(
       _oracle: string,
       _newAdmin: string,
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
-    updateAnswer(
-      _round: BigNumberish,
-      _answer: BigNumberish,
+    transferOwnership(
+      _to: string,
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
@@ -381,18 +421,11 @@ export class FluxAggregator extends Contract {
     ): Promise<ContractTransaction>;
 
     updateFutureRounds(
-      _newPaymentAmount: BigNumberish,
-      _minAnswers: BigNumberish,
-      _maxAnswers: BigNumberish,
+      _paymentAmount: BigNumberish,
+      _minSubmissions: BigNumberish,
+      _maxSubmissions: BigNumberish,
       _restartDelay: BigNumberish,
       _timeout: BigNumberish,
-      overrides?: TransactionOverrides
-    ): Promise<ContractTransaction>;
-
-    withdraw(
-      _oracle: string,
-      _recipient: string,
-      _amount: BigNumberish,
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
@@ -402,20 +435,32 @@ export class FluxAggregator extends Contract {
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
-    withdrawable(_oracle: string): Promise<BigNumber>;
+    withdrawPayment(
+      _oracle: string,
+      _recipient: string,
+      _amount: BigNumberish,
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
+    withdrawablePayment(_oracle: string): Promise<BigNumber>;
   };
 
   VERSION(): Promise<BigNumber>;
+
+  acceptAdmin(
+    _oracle: string,
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
 
   acceptOwnership(
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
-  addOracle(
-    _oracle: string,
-    _admin: string,
-    _minAnswers: BigNumberish,
-    _maxAnswers: BigNumberish,
+  addOracles(
+    _oracles: string[],
+    _admins: string[],
+    _minSubmissions: BigNumberish,
+    _maxSubmissions: BigNumberish,
     _restartDelay: BigNumberish,
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
@@ -430,21 +475,30 @@ export class FluxAggregator extends Contract {
 
   getAdmin(_oracle: string): Promise<string>;
 
-  getAnswer(_roundId: BigNumberish): Promise<BigNumber>;
+  getAnswer(
+    _roundId: BigNumberish,
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
 
   getOracles(): Promise<string[]>;
 
-  getOriginatingRoundOfAnswer(_roundId: BigNumberish): Promise<BigNumber>;
+  getRoundData(
+    _roundId: BigNumberish,
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
 
-  getRoundStartedAt(_roundId: BigNumberish): Promise<BigNumber>;
+  getTimestamp(
+    _roundId: BigNumberish,
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
 
-  getTimedOutStatus(_roundId: BigNumberish): Promise<boolean>;
+  latestAnswer(overrides?: TransactionOverrides): Promise<ContractTransaction>;
 
-  getTimestamp(_roundId: BigNumberish): Promise<BigNumber>;
+  latestRound(overrides?: TransactionOverrides): Promise<ContractTransaction>;
 
-  latestAnswer(): Promise<BigNumber>;
-
-  latestRound(): Promise<BigNumber>;
+  latestRoundData(
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
 
   latestSubmission(
     _oracle: string
@@ -453,80 +507,89 @@ export class FluxAggregator extends Contract {
     1: BigNumber;
   }>;
 
-  latestTimestamp(): Promise<BigNumber>;
+  latestTimestamp(
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
 
-  maxAnswerCount(): Promise<number>;
+  linkToken(): Promise<string>;
 
-  minAnswerCount(): Promise<number>;
+  maxSubmissionCount(): Promise<number>;
+
+  minSubmissionCount(): Promise<number>;
 
   onTokenTransfer(
     arg0: string,
     arg1: BigNumberish,
-    arg2: Arrayish,
+    _data: Arrayish,
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
   oracleCount(): Promise<number>;
 
+  oracleRoundState(
+    _oracle: string
+  ): Promise<{
+    _eligibleToSubmit: boolean;
+    _roundId: number;
+    _latestSubmission: BigNumber;
+    _startedAt: BigNumber;
+    _timeout: BigNumber;
+    _availableFunds: BigNumber;
+    _oracleCount: number;
+    _paymentAmount: BigNumber;
+    0: boolean;
+    1: number;
+    2: BigNumber;
+    3: BigNumber;
+    4: BigNumber;
+    5: BigNumber;
+    6: number;
+    7: BigNumber;
+  }>;
+
   owner(): Promise<string>;
 
   paymentAmount(): Promise<BigNumber>;
 
-  removeOracle(
-    _oracle: string,
-    _minAnswers: BigNumberish,
-    _maxAnswers: BigNumberish,
+  removeOracles(
+    _oracles: string[],
+    _minSubmissions: BigNumberish,
+    _maxSubmissions: BigNumberish,
     _restartDelay: BigNumberish,
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
   reportingRound(): Promise<BigNumber>;
 
-  reportingRoundStartedAt(): Promise<BigNumber>;
+  requestNewRound(
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
 
   restartDelay(): Promise<number>;
 
-  roundState(
-    _oracle: string
-  ): Promise<{
-    _reportableRoundId: number;
-    _eligibleToSubmit: boolean;
-    _latestRoundAnswer: BigNumber;
-    _timesOutAt: BigNumber;
-    _availableFunds: BigNumber;
-    _paymentAmount: BigNumber;
-    0: number;
-    1: boolean;
-    2: BigNumber;
-    3: BigNumber;
-    4: BigNumber;
-    5: BigNumber;
-  }>;
-
-  setAuthorization(
+  setRequesterPermissions(
     _requester: string,
-    _allowed: boolean,
+    _authorized: boolean,
+    _delay: BigNumberish,
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
-  startNewRound(overrides?: TransactionOverrides): Promise<ContractTransaction>;
+  submit(
+    _roundId: BigNumberish,
+    _submission: BigNumberish,
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
 
   timeout(): Promise<number>;
 
-  transferOwnership(
-    _to: string,
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
-
-  updateAdmin(
+  transferAdmin(
     _oracle: string,
     _newAdmin: string,
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
-  updateAnswer(
-    _round: BigNumberish,
-    _answer: BigNumberish,
+  transferOwnership(
+    _to: string,
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
@@ -535,18 +598,11 @@ export class FluxAggregator extends Contract {
   ): Promise<ContractTransaction>;
 
   updateFutureRounds(
-    _newPaymentAmount: BigNumberish,
-    _minAnswers: BigNumberish,
-    _maxAnswers: BigNumberish,
+    _paymentAmount: BigNumberish,
+    _minSubmissions: BigNumberish,
+    _maxSubmissions: BigNumberish,
     _restartDelay: BigNumberish,
     _timeout: BigNumberish,
-    overrides?: TransactionOverrides
-  ): Promise<ContractTransaction>;
-
-  withdraw(
-    _oracle: string,
-    _recipient: string,
-    _amount: BigNumberish,
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
@@ -556,7 +612,14 @@ export class FluxAggregator extends Contract {
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
-  withdrawable(_oracle: string): Promise<BigNumber>;
+  withdrawPayment(
+    _oracle: string,
+    _recipient: string,
+    _amount: BigNumberish,
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
+
+  withdrawablePayment(_oracle: string): Promise<BigNumber>;
 
   filters: {
     AnswerUpdated(
@@ -573,37 +636,45 @@ export class FluxAggregator extends Contract {
       startedAt: null
     ): EventFilter;
 
-    OracleAdded(oracle: string | null): EventFilter;
+    OracleAdminUpdateRequested(
+      oracle: string | null,
+      admin: null,
+      newAdmin: null
+    ): EventFilter;
 
     OracleAdminUpdated(
       oracle: string | null,
       newAdmin: string | null
     ): EventFilter;
 
-    OracleRemoved(oracle: string | null): EventFilter;
+    OraclePermissionsUpdated(
+      oracle: string | null,
+      whitelisted: boolean | null
+    ): EventFilter;
 
     OwnershipTransferRequested(
       from: string | null,
       to: string | null
     ): EventFilter;
 
-    OwnershipTransfered(from: string | null, to: string | null): EventFilter;
+    OwnershipTransferred(from: string | null, to: string | null): EventFilter;
 
-    RequesterAuthorizationSet(
+    RequesterPermissionsSet(
       requester: string | null,
-      allowed: null
+      authorized: null,
+      delay: null
     ): EventFilter;
 
     RoundDetailsUpdated(
       paymentAmount: BigNumberish | null,
-      minAnswerCount: BigNumberish | null,
-      maxAnswerCount: BigNumberish | null,
+      minSubmissionCount: BigNumberish | null,
+      maxSubmissionCount: BigNumberish | null,
       restartDelay: null,
       timeout: null
     ): EventFilter;
 
     SubmissionReceived(
-      answer: BigNumberish | null,
+      submission: BigNumberish | null,
       round: BigNumberish | null,
       oracle: string | null
     ): EventFilter;
@@ -612,13 +683,15 @@ export class FluxAggregator extends Contract {
   estimate: {
     VERSION(): Promise<BigNumber>;
 
+    acceptAdmin(_oracle: string): Promise<BigNumber>;
+
     acceptOwnership(): Promise<BigNumber>;
 
-    addOracle(
-      _oracle: string,
-      _admin: string,
-      _minAnswers: BigNumberish,
-      _maxAnswers: BigNumberish,
+    addOracles(
+      _oracles: string[],
+      _admins: string[],
+      _minSubmissions: BigNumberish,
+      _maxSubmissions: BigNumberish,
       _restartDelay: BigNumberish
     ): Promise<BigNumber>;
 
@@ -636,11 +709,7 @@ export class FluxAggregator extends Contract {
 
     getOracles(): Promise<BigNumber>;
 
-    getOriginatingRoundOfAnswer(_roundId: BigNumberish): Promise<BigNumber>;
-
-    getRoundStartedAt(_roundId: BigNumberish): Promise<BigNumber>;
-
-    getTimedOutStatus(_roundId: BigNumberish): Promise<BigNumber>;
+    getRoundData(_roundId: BigNumberish): Promise<BigNumber>;
 
     getTimestamp(_roundId: BigNumberish): Promise<BigNumber>;
 
@@ -648,70 +717,70 @@ export class FluxAggregator extends Contract {
 
     latestRound(): Promise<BigNumber>;
 
+    latestRoundData(): Promise<BigNumber>;
+
     latestSubmission(_oracle: string): Promise<BigNumber>;
 
     latestTimestamp(): Promise<BigNumber>;
 
-    maxAnswerCount(): Promise<BigNumber>;
+    linkToken(): Promise<BigNumber>;
 
-    minAnswerCount(): Promise<BigNumber>;
+    maxSubmissionCount(): Promise<BigNumber>;
+
+    minSubmissionCount(): Promise<BigNumber>;
 
     onTokenTransfer(
       arg0: string,
       arg1: BigNumberish,
-      arg2: Arrayish
+      _data: Arrayish
     ): Promise<BigNumber>;
 
     oracleCount(): Promise<BigNumber>;
+
+    oracleRoundState(_oracle: string): Promise<BigNumber>;
 
     owner(): Promise<BigNumber>;
 
     paymentAmount(): Promise<BigNumber>;
 
-    removeOracle(
-      _oracle: string,
-      _minAnswers: BigNumberish,
-      _maxAnswers: BigNumberish,
+    removeOracles(
+      _oracles: string[],
+      _minSubmissions: BigNumberish,
+      _maxSubmissions: BigNumberish,
       _restartDelay: BigNumberish
     ): Promise<BigNumber>;
 
     reportingRound(): Promise<BigNumber>;
 
-    reportingRoundStartedAt(): Promise<BigNumber>;
+    requestNewRound(): Promise<BigNumber>;
 
     restartDelay(): Promise<BigNumber>;
 
-    roundState(_oracle: string): Promise<BigNumber>;
+    setRequesterPermissions(
+      _requester: string,
+      _authorized: boolean,
+      _delay: BigNumberish
+    ): Promise<BigNumber>;
 
-    setAuthorization(_requester: string, _allowed: boolean): Promise<BigNumber>;
-
-    startNewRound(): Promise<BigNumber>;
+    submit(
+      _roundId: BigNumberish,
+      _submission: BigNumberish
+    ): Promise<BigNumber>;
 
     timeout(): Promise<BigNumber>;
 
+    transferAdmin(_oracle: string, _newAdmin: string): Promise<BigNumber>;
+
     transferOwnership(_to: string): Promise<BigNumber>;
-
-    updateAdmin(_oracle: string, _newAdmin: string): Promise<BigNumber>;
-
-    updateAnswer(
-      _round: BigNumberish,
-      _answer: BigNumberish
-    ): Promise<BigNumber>;
 
     updateAvailableFunds(): Promise<BigNumber>;
 
     updateFutureRounds(
-      _newPaymentAmount: BigNumberish,
-      _minAnswers: BigNumberish,
-      _maxAnswers: BigNumberish,
+      _paymentAmount: BigNumberish,
+      _minSubmissions: BigNumberish,
+      _maxSubmissions: BigNumberish,
       _restartDelay: BigNumberish,
       _timeout: BigNumberish
-    ): Promise<BigNumber>;
-
-    withdraw(
-      _oracle: string,
-      _recipient: string,
-      _amount: BigNumberish
     ): Promise<BigNumber>;
 
     withdrawFunds(
@@ -719,6 +788,12 @@ export class FluxAggregator extends Contract {
       _amount: BigNumberish
     ): Promise<BigNumber>;
 
-    withdrawable(_oracle: string): Promise<BigNumber>;
+    withdrawPayment(
+      _oracle: string,
+      _recipient: string,
+      _amount: BigNumberish
+    ): Promise<BigNumber>;
+
+    withdrawablePayment(_oracle: string): Promise<BigNumber>;
   };
 }

@@ -30,7 +30,7 @@ interface OwnedTestHelperInterface extends Interface {
       encodeTopics([from, to]: [string | null, string | null]): string[];
     }>;
 
-    OwnershipTransfered: TypedEventDescription<{
+    OwnershipTransferred: TypedEventDescription<{
       encodeTopics([from, to]: [string | null, string | null]): string[];
     }>;
   };
@@ -92,7 +92,7 @@ export class OwnedTestHelper extends Contract {
       to: string | null
     ): EventFilter;
 
-    OwnershipTransfered(from: string | null, to: string | null): EventFilter;
+    OwnershipTransferred(from: string | null, to: string | null): EventFilter;
   };
 
   estimate: {

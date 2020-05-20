@@ -5,6 +5,7 @@ import { Contract, ContractFactory, Signer } from "ethers";
 import { Provider } from "ethers/providers";
 import { UnsignedTransaction } from "ethers/utils/transaction";
 
+import { TransactionOverrides } from ".";
 import { Pointer } from "./Pointer";
 
 export class PointerFactory extends ContractFactory {
@@ -12,11 +13,14 @@ export class PointerFactory extends ContractFactory {
     super(_abi, _bytecode, signer);
   }
 
-  deploy(_addr: string): Promise<Pointer> {
-    return super.deploy(_addr) as Promise<Pointer>;
+  deploy(_addr: string, overrides?: TransactionOverrides): Promise<Pointer> {
+    return super.deploy(_addr, overrides) as Promise<Pointer>;
   }
-  getDeployTransaction(_addr: string): UnsignedTransaction {
-    return super.getDeployTransaction(_addr);
+  getDeployTransaction(
+    _addr: string,
+    overrides?: TransactionOverrides
+  ): UnsignedTransaction {
+    return super.getDeployTransaction(_addr, overrides);
   }
   attach(address: string): Pointer {
     return super.attach(address) as Pointer;
@@ -61,4 +65,4 @@ const _abi = [
 ];
 
 const _bytecode =
-  "0x608060405234801561001057600080fd5b5060405160208061016b83398101806040528101908080519060200190929190505050806000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055505060e9806100826000396000f300608060405260043610603f576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806338cc4831146044575b600080fd5b348015604f57600080fd5b5060566098565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff16815600a165627a7a723058203a332b79dddedb121a00a241865fea91b9fc08a14924f4b8fc7f5066dbd8b0a20029";
+  "0x608060405234801561001057600080fd5b50604051602080610117833981016040525160008054600160a060020a03909216600160a060020a031990921691909117905560c6806100516000396000f300608060405260043610603e5763ffffffff7c010000000000000000000000000000000000000000000000000000000060003504166338cc483181146043575b600080fd5b348015604e57600080fd5b506055607e565b6040805173ffffffffffffffffffffffffffffffffffffffff9092168252519081900360200190f35b60005473ffffffffffffffffffffffffffffffffffffffff16815600a165627a7a72305820783b7ba29ba3b15ed774d3c483b551737f7c81cdb125c5f7e4b8150997823a0d0029";

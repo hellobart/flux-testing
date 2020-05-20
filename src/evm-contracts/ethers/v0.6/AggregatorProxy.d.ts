@@ -16,7 +16,13 @@ interface AggregatorProxyInterface extends Interface {
 
     aggregator: TypedFunctionDescription<{ encode([]: []): string }>;
 
+    decimals: TypedFunctionDescription<{ encode([]: []): string }>;
+
     getAnswer: TypedFunctionDescription<{
+      encode([_roundId]: [BigNumberish]): string;
+    }>;
+
+    getRoundData: TypedFunctionDescription<{
       encode([_roundId]: [BigNumberish]): string;
     }>;
 
@@ -27,6 +33,8 @@ interface AggregatorProxyInterface extends Interface {
     latestAnswer: TypedFunctionDescription<{ encode([]: []): string }>;
 
     latestRound: TypedFunctionDescription<{ encode([]: []): string }>;
+
+    latestRoundData: TypedFunctionDescription<{ encode([]: []): string }>;
 
     latestTimestamp: TypedFunctionDescription<{ encode([]: []): string }>;
 
@@ -62,7 +70,7 @@ interface AggregatorProxyInterface extends Interface {
       encodeTopics([from, to]: [string | null, string | null]): string[];
     }>;
 
-    OwnershipTransfered: TypedEventDescription<{
+    OwnershipTransferred: TypedEventDescription<{
       encodeTopics([from, to]: [string | null, string | null]): string[];
     }>;
   };
@@ -91,15 +99,36 @@ export class AggregatorProxy extends Contract {
 
     aggregator(): Promise<string>;
 
-    getAnswer(_roundId: BigNumberish): Promise<BigNumber>;
+    decimals(overrides?: TransactionOverrides): Promise<ContractTransaction>;
 
-    getTimestamp(_roundId: BigNumberish): Promise<BigNumber>;
+    getAnswer(
+      _roundId: BigNumberish,
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
 
-    latestAnswer(): Promise<BigNumber>;
+    getRoundData(
+      _roundId: BigNumberish,
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
 
-    latestRound(): Promise<BigNumber>;
+    getTimestamp(
+      _roundId: BigNumberish,
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
 
-    latestTimestamp(): Promise<BigNumber>;
+    latestAnswer(
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
+    latestRound(overrides?: TransactionOverrides): Promise<ContractTransaction>;
+
+    latestRoundData(
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
+    latestTimestamp(
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
 
     owner(): Promise<string>;
 
@@ -120,15 +149,34 @@ export class AggregatorProxy extends Contract {
 
   aggregator(): Promise<string>;
 
-  getAnswer(_roundId: BigNumberish): Promise<BigNumber>;
+  decimals(overrides?: TransactionOverrides): Promise<ContractTransaction>;
 
-  getTimestamp(_roundId: BigNumberish): Promise<BigNumber>;
+  getAnswer(
+    _roundId: BigNumberish,
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
 
-  latestAnswer(): Promise<BigNumber>;
+  getRoundData(
+    _roundId: BigNumberish,
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
 
-  latestRound(): Promise<BigNumber>;
+  getTimestamp(
+    _roundId: BigNumberish,
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
 
-  latestTimestamp(): Promise<BigNumber>;
+  latestAnswer(overrides?: TransactionOverrides): Promise<ContractTransaction>;
+
+  latestRound(overrides?: TransactionOverrides): Promise<ContractTransaction>;
+
+  latestRoundData(
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
+
+  latestTimestamp(
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
 
   owner(): Promise<string>;
 
@@ -160,7 +208,7 @@ export class AggregatorProxy extends Contract {
       to: string | null
     ): EventFilter;
 
-    OwnershipTransfered(from: string | null, to: string | null): EventFilter;
+    OwnershipTransferred(from: string | null, to: string | null): EventFilter;
   };
 
   estimate: {
@@ -168,13 +216,19 @@ export class AggregatorProxy extends Contract {
 
     aggregator(): Promise<BigNumber>;
 
+    decimals(): Promise<BigNumber>;
+
     getAnswer(_roundId: BigNumberish): Promise<BigNumber>;
+
+    getRoundData(_roundId: BigNumberish): Promise<BigNumber>;
 
     getTimestamp(_roundId: BigNumberish): Promise<BigNumber>;
 
     latestAnswer(): Promise<BigNumber>;
 
     latestRound(): Promise<BigNumber>;
+
+    latestRoundData(): Promise<BigNumber>;
 
     latestTimestamp(): Promise<BigNumber>;
 

@@ -18,6 +18,10 @@ interface WhitelistedInterface extends Interface {
       encode([_user]: [string]): string;
     }>;
 
+    disableWhitelist: TypedFunctionDescription<{ encode([]: []): string }>;
+
+    enableWhitelist: TypedFunctionDescription<{ encode([]: []): string }>;
+
     owner: TypedFunctionDescription<{ encode([]: []): string }>;
 
     removeFromWhitelist: TypedFunctionDescription<{
@@ -27,6 +31,8 @@ interface WhitelistedInterface extends Interface {
     transferOwnership: TypedFunctionDescription<{
       encode([_to]: [string]): string;
     }>;
+
+    whitelistEnabled: TypedFunctionDescription<{ encode([]: []): string }>;
 
     whitelisted: TypedFunctionDescription<{ encode([]: [string]): string }>;
   };
@@ -40,13 +46,19 @@ interface WhitelistedInterface extends Interface {
       encodeTopics([from, to]: [string | null, string | null]): string[];
     }>;
 
-    OwnershipTransfered: TypedEventDescription<{
+    OwnershipTransferred: TypedEventDescription<{
       encodeTopics([from, to]: [string | null, string | null]): string[];
     }>;
 
     RemovedFromWhitelist: TypedEventDescription<{
       encodeTopics([user]: [null]): string[];
     }>;
+
+    WhitelistDisabled: TypedEventDescription<{
+      encodeTopics([]: []): string[];
+    }>;
+
+    WhitelistEnabled: TypedEventDescription<{ encodeTopics([]: []): string[] }>;
   };
 }
 
@@ -73,6 +85,14 @@ export class Whitelisted extends Contract {
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
+    disableWhitelist(
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
+    enableWhitelist(
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
     owner(): Promise<string>;
 
     removeFromWhitelist(
@@ -85,6 +105,8 @@ export class Whitelisted extends Contract {
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
+    whitelistEnabled(): Promise<boolean>;
+
     whitelisted(arg0: string): Promise<boolean>;
   };
 
@@ -94,6 +116,14 @@ export class Whitelisted extends Contract {
 
   addToWhitelist(
     _user: string,
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
+
+  disableWhitelist(
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
+
+  enableWhitelist(
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
@@ -109,6 +139,8 @@ export class Whitelisted extends Contract {
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
 
+  whitelistEnabled(): Promise<boolean>;
+
   whitelisted(arg0: string): Promise<boolean>;
 
   filters: {
@@ -119,9 +151,13 @@ export class Whitelisted extends Contract {
       to: string | null
     ): EventFilter;
 
-    OwnershipTransfered(from: string | null, to: string | null): EventFilter;
+    OwnershipTransferred(from: string | null, to: string | null): EventFilter;
 
     RemovedFromWhitelist(user: null): EventFilter;
+
+    WhitelistDisabled(): EventFilter;
+
+    WhitelistEnabled(): EventFilter;
   };
 
   estimate: {
@@ -129,11 +165,17 @@ export class Whitelisted extends Contract {
 
     addToWhitelist(_user: string): Promise<BigNumber>;
 
+    disableWhitelist(): Promise<BigNumber>;
+
+    enableWhitelist(): Promise<BigNumber>;
+
     owner(): Promise<BigNumber>;
 
     removeFromWhitelist(_user: string): Promise<BigNumber>;
 
     transferOwnership(_to: string): Promise<BigNumber>;
+
+    whitelistEnabled(): Promise<BigNumber>;
 
     whitelisted(arg0: string): Promise<BigNumber>;
   };

@@ -15,6 +15,10 @@ interface ConcreteSignedSafeMathInterface extends Interface {
     testAdd: TypedFunctionDescription<{
       encode([_a, _b]: [BigNumberish, BigNumberish]): string;
     }>;
+
+    testAvg: TypedFunctionDescription<{
+      encode([_a, _b]: [BigNumberish, BigNumberish]): string;
+    }>;
   };
 
   events: {};
@@ -38,13 +42,19 @@ export class ConcreteSignedSafeMath extends Contract {
 
   functions: {
     testAdd(_a: BigNumberish, _b: BigNumberish): Promise<BigNumber>;
+
+    testAvg(_a: BigNumberish, _b: BigNumberish): Promise<BigNumber>;
   };
 
   testAdd(_a: BigNumberish, _b: BigNumberish): Promise<BigNumber>;
+
+  testAvg(_a: BigNumberish, _b: BigNumberish): Promise<BigNumber>;
 
   filters: {};
 
   estimate: {
     testAdd(_a: BigNumberish, _b: BigNumberish): Promise<BigNumber>;
+
+    testAvg(_a: BigNumberish, _b: BigNumberish): Promise<BigNumber>;
   };
 }

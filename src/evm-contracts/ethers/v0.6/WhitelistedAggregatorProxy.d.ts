@@ -20,7 +20,17 @@ interface WhitelistedAggregatorProxyInterface extends Interface {
 
     aggregator: TypedFunctionDescription<{ encode([]: []): string }>;
 
+    decimals: TypedFunctionDescription<{ encode([]: []): string }>;
+
+    disableWhitelist: TypedFunctionDescription<{ encode([]: []): string }>;
+
+    enableWhitelist: TypedFunctionDescription<{ encode([]: []): string }>;
+
     getAnswer: TypedFunctionDescription<{
+      encode([_roundId]: [BigNumberish]): string;
+    }>;
+
+    getRoundData: TypedFunctionDescription<{
       encode([_roundId]: [BigNumberish]): string;
     }>;
 
@@ -31,6 +41,8 @@ interface WhitelistedAggregatorProxyInterface extends Interface {
     latestAnswer: TypedFunctionDescription<{ encode([]: []): string }>;
 
     latestRound: TypedFunctionDescription<{ encode([]: []): string }>;
+
+    latestRoundData: TypedFunctionDescription<{ encode([]: []): string }>;
 
     latestTimestamp: TypedFunctionDescription<{ encode([]: []): string }>;
 
@@ -47,6 +59,8 @@ interface WhitelistedAggregatorProxyInterface extends Interface {
     transferOwnership: TypedFunctionDescription<{
       encode([_to]: [string]): string;
     }>;
+
+    whitelistEnabled: TypedFunctionDescription<{ encode([]: []): string }>;
 
     whitelisted: TypedFunctionDescription<{ encode([]: [string]): string }>;
   };
@@ -76,13 +90,19 @@ interface WhitelistedAggregatorProxyInterface extends Interface {
       encodeTopics([from, to]: [string | null, string | null]): string[];
     }>;
 
-    OwnershipTransfered: TypedEventDescription<{
+    OwnershipTransferred: TypedEventDescription<{
       encodeTopics([from, to]: [string | null, string | null]): string[];
     }>;
 
     RemovedFromWhitelist: TypedEventDescription<{
       encodeTopics([user]: [null]): string[];
     }>;
+
+    WhitelistDisabled: TypedEventDescription<{
+      encodeTopics([]: []): string[];
+    }>;
+
+    WhitelistEnabled: TypedEventDescription<{ encodeTopics([]: []): string[] }>;
   };
 }
 
@@ -127,15 +147,44 @@ export class WhitelistedAggregatorProxy extends Contract {
 
     aggregator(): Promise<string>;
 
-    getAnswer(_roundId: BigNumberish): Promise<BigNumber>;
+    decimals(overrides?: TransactionOverrides): Promise<ContractTransaction>;
 
-    getTimestamp(_roundId: BigNumberish): Promise<BigNumber>;
+    disableWhitelist(
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
 
-    latestAnswer(): Promise<BigNumber>;
+    enableWhitelist(
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
 
-    latestRound(): Promise<BigNumber>;
+    getAnswer(
+      _roundId: BigNumberish,
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
 
-    latestTimestamp(): Promise<BigNumber>;
+    getRoundData(
+      _roundId: BigNumberish,
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
+    getTimestamp(
+      _roundId: BigNumberish,
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
+    latestAnswer(
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
+    latestRound(overrides?: TransactionOverrides): Promise<ContractTransaction>;
+
+    latestRoundData(
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
+
+    latestTimestamp(
+      overrides?: TransactionOverrides
+    ): Promise<ContractTransaction>;
 
     owner(): Promise<string>;
 
@@ -154,6 +203,8 @@ export class WhitelistedAggregatorProxy extends Contract {
       overrides?: TransactionOverrides
     ): Promise<ContractTransaction>;
 
+    whitelistEnabled(): Promise<boolean>;
+
     whitelisted(arg0: string): Promise<boolean>;
   };
 
@@ -168,15 +219,42 @@ export class WhitelistedAggregatorProxy extends Contract {
 
   aggregator(): Promise<string>;
 
-  getAnswer(_roundId: BigNumberish): Promise<BigNumber>;
+  decimals(overrides?: TransactionOverrides): Promise<ContractTransaction>;
 
-  getTimestamp(_roundId: BigNumberish): Promise<BigNumber>;
+  disableWhitelist(
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
 
-  latestAnswer(): Promise<BigNumber>;
+  enableWhitelist(
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
 
-  latestRound(): Promise<BigNumber>;
+  getAnswer(
+    _roundId: BigNumberish,
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
 
-  latestTimestamp(): Promise<BigNumber>;
+  getRoundData(
+    _roundId: BigNumberish,
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
+
+  getTimestamp(
+    _roundId: BigNumberish,
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
+
+  latestAnswer(overrides?: TransactionOverrides): Promise<ContractTransaction>;
+
+  latestRound(overrides?: TransactionOverrides): Promise<ContractTransaction>;
+
+  latestRoundData(
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
+
+  latestTimestamp(
+    overrides?: TransactionOverrides
+  ): Promise<ContractTransaction>;
 
   owner(): Promise<string>;
 
@@ -194,6 +272,8 @@ export class WhitelistedAggregatorProxy extends Contract {
     _to: string,
     overrides?: TransactionOverrides
   ): Promise<ContractTransaction>;
+
+  whitelistEnabled(): Promise<boolean>;
 
   whitelisted(arg0: string): Promise<boolean>;
 
@@ -217,9 +297,13 @@ export class WhitelistedAggregatorProxy extends Contract {
       to: string | null
     ): EventFilter;
 
-    OwnershipTransfered(from: string | null, to: string | null): EventFilter;
+    OwnershipTransferred(from: string | null, to: string | null): EventFilter;
 
     RemovedFromWhitelist(user: null): EventFilter;
+
+    WhitelistDisabled(): EventFilter;
+
+    WhitelistEnabled(): EventFilter;
   };
 
   estimate: {
@@ -229,13 +313,23 @@ export class WhitelistedAggregatorProxy extends Contract {
 
     aggregator(): Promise<BigNumber>;
 
+    decimals(): Promise<BigNumber>;
+
+    disableWhitelist(): Promise<BigNumber>;
+
+    enableWhitelist(): Promise<BigNumber>;
+
     getAnswer(_roundId: BigNumberish): Promise<BigNumber>;
+
+    getRoundData(_roundId: BigNumberish): Promise<BigNumber>;
 
     getTimestamp(_roundId: BigNumberish): Promise<BigNumber>;
 
     latestAnswer(): Promise<BigNumber>;
 
     latestRound(): Promise<BigNumber>;
+
+    latestRoundData(): Promise<BigNumber>;
 
     latestTimestamp(): Promise<BigNumber>;
 
@@ -246,6 +340,8 @@ export class WhitelistedAggregatorProxy extends Contract {
     setAggregator(_aggregator: string): Promise<BigNumber>;
 
     transferOwnership(_to: string): Promise<BigNumber>;
+
+    whitelistEnabled(): Promise<BigNumber>;
 
     whitelisted(arg0: string): Promise<BigNumber>;
   };
